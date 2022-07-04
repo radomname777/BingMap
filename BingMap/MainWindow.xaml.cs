@@ -114,7 +114,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                         }
                     };
             }
-            catch { MessageBox.Show("Error"); }
+            catch {}
         }
     }
 
