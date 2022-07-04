@@ -13,11 +13,12 @@ using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-
 namespace BingMap;
 
 public partial class MainWindow : Window, INotifyPropertyChanged
@@ -49,6 +50,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         timer.Tick += Timer_Tick;
         timer.Start();
     }
+
+
     public SolidColorBrush ColorBus { get; set; }
     public string ROUTENAME { get; set; }
     private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -64,7 +67,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     }
     private static List<Pushpin> baku1 = new();
     static Pushpin pshp = new Pushpin();
-     static ToolTip Tool = new ToolTip();
     [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
     static extern int MessageBoxTimeout(IntPtr hwnd, String text, String title,uint type, Int16 wLanguageId, Int32 milliseconds);
     private void BusList()
@@ -77,26 +79,24 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             {
 
                 pshp = new();
-                Tool = new();
                 string av = bakuBus.BUS[i].Attributes.PLATE;
                 pshp.Name =$"A{av}";
                 double num1 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LONGITUDE);
                 double num2 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LATITUDE);
                 Style ax = (Style)(Resources["Men"]);
-                Style ax2 = (Style)(Resources["Tol"]);
                 MyProperty2 = bakuBus.BUS[i].Attributes.DISPLAY_ROUTE_CODE;
                 ROUTENAME = bakuBus.BUS[i].Attributes.ROUTE_NAME;
                 CurrentStop = $"Cari: {bakuBus.BUS[i].Attributes.CURRENT_STOP}";
-               
                 PrevStop = $"Novbeti: {bakuBus.BUS[i].Attributes.PREV_STOP}";
                 MessageBoxTimeout((System.IntPtr)0,"", "", 0, 0,1);
                 ColorBus = Col();
-                Tool.Style = ax2;
-                pshp.ToolTip = Tool;
+                pshp.MouseEnter += Pshp_MouseEnter;
+                pshp.MouseLeave += Pshp_MouseLeave;
                 pshp.Style = ax;
                 pshp.Location = new Location(num2, num1);
                 baku1.Add(pshp);
                 m.Children.Add(baku1[baku1.Count-1]);
+                break;
             }
         }
         else
@@ -111,13 +111,40 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                         double num2 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LATITUDE);
                         baku1[i].Location = new Location(num2, num1);
                     }
-
                 };
 
             }
             catch { }
         }
     }
+
+    private void Pshp_MouseLeave(object sender, MouseEventArgs e)
+    {
+        Values.Background = new SolidColorBrush(Colors.Transparent);
+        Values.IsHitTestVisible = false;
+
+        Busimage.Visibility = Visibility.Hidden;
+        Text1.Content = "";
+        Sep.Visibility = Visibility.Hidden;
+        Text2.Content = "";
+        Text3.Content = "";
+    }
+    private void Pshp_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        if (sender is Pushpin psp)
+        {
+
+            Values.IsHitTestVisible = true;
+            Values.Background = new SolidColorBrush(Colors.White);
+            Busimage.Visibility = Visibility.Visible;
+            Text1.Content = ROUTENAME;
+            Sep.Visibility = Visibility.Visible;
+            Text2.Content = CurrentStop;
+            Text3.Content = PrevStop;
+
+        }
+    }
+
     private async void Timer_Tick(object? sender, EventArgs e)
     {
         using HttpClient client = new HttpClient();

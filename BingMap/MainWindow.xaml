@@ -8,27 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
     <Window.Resources>
-        <Style x:Key="Tol" TargetType="ToolTip" x:Name="Tol">
-            <Setter Property="OverridesDefaultStyle" Value="true" />
-            <Setter Property="HasDropShadow" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToolTip">
-                        <StackPanel Width="300" Height="340" Background="White" >
-                            <TextBlock Text="{Binding ROUTENAME}" FontSize="16"></TextBlock>
-                            <StackPanel Background="Red" Width="300" Height="8" ></StackPanel>
-                            <StackPanel VerticalAlignment="Center" Width="250" Height="150" >
-                                <StackPanel.Background>
-                                    <ImageBrush ImageSource="/CREALIS.jpg"/>
-                                </StackPanel.Background>
-                            </StackPanel>
-                            <TextBlock Margin="0,70,10,10" FontSize="12" Text="{Binding CurrentStop}"></TextBlock>
-                            <TextBlock  FontSize="12" Text="{Binding PrevStop}"></TextBlock>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
         <Style x:Name="Men" TargetType="map:Pushpin" x:Key="Men" >
             <Setter Property="OverridesDefaultStyle" Value="True"  />
             <Setter Property="Background" Value="Transparent" />
@@ -59,8 +38,27 @@
         </Style>
 
     </Window.Resources>
-    <Grid>
-        <map:Map  TextBlock.TextAlignment="Center" ZoomLevel="12" Center="40.4093, 49.8671"  Name="m">
+    <Grid Name="Nihad1" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="2.2*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <map:Map Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"  TextBlock.TextAlignment="Center" ZoomLevel="12" Center="40.4093, 49.8671"  Name="m">
         </map:Map>
+        <StackPanel IsHitTestVisible="False"  Background="Transparent" Name="Values" Grid.Column="1">
+            <Label Name="Text1" HorizontalAlignment="Center" FontSize="14"></Label>
+            <Separator Visibility="Hidden" Name="Sep" Background="Red"></Separator>
+            <StackPanel Visibility="Hidden" Name="Busimage" VerticalAlignment="Center" Height="90" >
+                <StackPanel.Background>
+                    <ImageBrush ImageSource="/CREALIS.jpg"/>
+                </StackPanel.Background>
+            </StackPanel>
+            <Label Name="Text2" HorizontalAlignment="Center" FontSize="14" Margin="5" ></Label>
+            <Label Name="Text3" HorizontalAlignment="Center" FontSize="14" Margin="10" ></Label>
+        </StackPanel>
     </Grid>
 </Window>
