@@ -36,7 +36,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     }
 
     public string MyProperty2 { get; set; }
-
     public string CurrentStop { get; set; }
     public string PrevStop { get; set; }
     DispatcherTimer timer = new DispatcherTimer();
@@ -44,8 +43,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         DataContext = this;
         InitializeComponent();
-
-        //m.CredentialsProvider = new ApplicationIdCredentialsProvider("MapKOd");
         timer.Interval = new TimeSpan(0, 0, 0, 1);
         timer.Tick += Timer_Tick;
         timer.Start();
@@ -56,9 +53,12 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     public string ROUTENAME { get; set; }
     private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        using HttpClient client = new HttpClient();
-        var jsonString = await client.GetStringAsync("https://www.bakubus.az/az/ajax/apiNew1");
-        BakuBus = JsonSerializer.Deserialize<BakuBus>(jsonString);
+
+            using HttpClient client = new HttpClient();
+            var jsonString = await client.GetStringAsync("https://www.bakubus.az/az/ajax/apiNew1");
+            BakuBus = JsonSerializer.Deserialize<BakuBus>(jsonString);
+        
+
     }
     private SolidColorBrush Col()
     {
@@ -92,29 +92,29 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 ColorBus = Col();
                 pshp.MouseEnter += Pshp_MouseEnter;
                 pshp.MouseLeave += Pshp_MouseLeave;
+                pshp.Tag = i.ToString();
                 pshp.Style = ax;
                 pshp.Location = new Location(num2, num1);
                 baku1.Add(pshp);
                 m.Children.Add(baku1[baku1.Count-1]);
-                break;
+                
             }
         }
         else
         {
             try
             {
-                for (int i = 0; i < BakuBus.BUS.Count; i++)
-                {
-                    if ($"A{bakuBus.BUS[i].Attributes.PLATE}" == baku1[i].Name)
+                    for (int i = 0; i < BakuBus.BUS.Count; i++)
                     {
-                        double num1 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LONGITUDE);
-                        double num2 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LATITUDE);
-                        baku1[i].Location = new Location(num2, num1);
-                    }
-                };
-
+                        if ($"A{bakuBus.BUS[i].Attributes.PLATE}" == baku1[i].Name)
+                        {
+                            double num1 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LONGITUDE);
+                            double num2 = Convert.ToDouble(bakuBus.BUS[i].Attributes.LATITUDE);
+                            baku1[i].Location = new Location(num2, num1);
+                        }
+                    };
             }
-            catch { }
+            catch { MessageBox.Show("Error"); }
         }
     }
 
@@ -122,7 +122,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         Values.Background = new SolidColorBrush(Colors.Transparent);
         Values.IsHitTestVisible = false;
-
         Busimage.Visibility = Visibility.Hidden;
         Text1.Content = "";
         Sep.Visibility = Visibility.Hidden;
@@ -133,15 +132,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         if (sender is Pushpin psp)
         {
-
-            Values.IsHitTestVisible = true;
-            Values.Background = new SolidColorBrush(Colors.White);
-            Busimage.Visibility = Visibility.Visible;
-            Text1.Content = ROUTENAME;
-            Sep.Visibility = Visibility.Visible;
-            Text2.Content = CurrentStop;
-            Text3.Content = PrevStop;
-
+                    Values.IsHitTestVisible = true;
+                    Values.Background = new SolidColorBrush(Colors.White);
+                    Busimage.Visibility = Visibility.Visible;
+                    Text1.Content = bakuBus.BUS[Convert.ToInt32(psp.Tag)].Attributes.ROUTE_NAME;
+                    Sep.Visibility = Visibility.Visible;
+                    Text2.Content = bakuBus.BUS[Convert.ToInt32(psp.Tag)].Attributes.CURRENT_STOP;
+                    Text3.Content = bakuBus.BUS[Convert.ToInt32(psp.Tag)].Attributes.PREV_STOP;
         }
     }
 
